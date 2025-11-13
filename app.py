@@ -13,7 +13,7 @@ def get_connection():
         host='localhost',
         user='root',
         password='bYvgtiyzKbfaFAqcpJzeFwCWXqaPxrJv',  # your password
-        database='inventory_db',
+        database='railway',
         cursorclass=pymysql.cursors.DictCursor
     )
 
