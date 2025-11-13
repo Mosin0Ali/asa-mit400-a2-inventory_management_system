@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid text-light mt-4" style="max-width: 700px;">
+    <h2 class="mb-4 text-center">↩️ Return Order</h2>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label>Sale</label>
+            <select name="sale_id" class="form-control bg-dark text-light" id="saleSelect" required>
+                <option value="">Select Sale</option>
+                {% for sale in sales %}
+                    <option value="{{ sale.sale_id }}">
+                        {{ sale.sale_id }} — {{ sale.customer_name }} ({{ sale.sale_date.strftime('%Y-%m-%d') }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Product</label>
+            <select name="product_id" class="form-control bg-dark text-light" id="productSelect" required>
+                <option value="">Select Product</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Quantity to Return</label>
+            <input type="number" name="quantity" min="1" class="form-control bg-dark text-light" required>
+        </div>
+
+        <button type="submit" class="btn btn-warning w-100">Return Product</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('saleSelect').addEventListener('change', async function () {
+    const saleId = this.value;
+    const productSelect = document.getElementById('productSelect');
+    productSelect.innerHTML = '<option value="">Select Product</option>';
+
+    if (!saleId) return;
+
+    try {
+        const response = await fetch(`/api/sale-items/${saleId}`);
+        const data = await response.json();
+
+        if (data.items.length > 0) {
+            data.items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.product_id;
+                option.textContent = `${item.product_name} (Sold: ${item.quantity_sold})`;
+                productSelect.appendChild(option);
+            });
+        } else {
+            const opt = document.createElement('option');
+            opt.textContent = "No products found for this sale";
+            productSelect.appendChild(opt);
+        }
+    } catch (err) {
+        console.error('Error fetching sale items:', err);
+    }
+});
+</script>
+{% endblock %}

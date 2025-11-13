@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid text-light" style="max-width: 1200px; margin: 0 auto;">
+    <h2 class="mb-5 text-center text-3xl font-bold">📊 Weekly Sales Overview</h2>
+    <!-- Dark-themed chart container with 30% viewport height -->
+    <div class="row">
+        <div class="col-6">
+            <div class="card bg-gray-900 p-6 mb-8 shadow-2xl rounded-xl border border-gray-700"
+                style="height: 30vh; min-height: 250px;">
+                <canvas id="salesChart" class="w-full h-full bg-dark"></canvas>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card bg-gray-900 p-6 mb-8 shadow-2xl rounded-xl border border-gray-700"
+                style="height: 30vh; min-height: 250px;">
+                <canvas id="topSelling" class="w-full h-full bg-dark"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Quick Actions -->
+    <div class="row text-center g-4 mt-4">
+        <div class="col-md-3">
+            <a href="{{ url_for('add_product') }}"
+                class="btn btn-lg btn-outline-light w-full py-6 rounded-xl transition duration-300 hover:bg-white hover:text-gray-900 shadow-md">
+                <i class="bi bi-plus-circle fs-2 mb-2"></i><br>Add Product
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('create_order') }}"
+                class="btn btn-lg btn-outline-light w-full py-6 rounded-xl transition duration-300 hover:bg-white hover:text-gray-900 shadow-md">
+                <i class="bi bi-cart-check fs-2 mb-2"></i><br>Create Order
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('return_order') }}"
+                class="btn btn-lg btn-outline-light w-full py-6 rounded-xl transition duration-300 hover:bg-white hover:text-gray-900 shadow-md">
+                <i class="bi bi-arrow-repeat fs-2 mb-2"></i><br>Return Order
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('products') }}"
+                class="btn btn-lg btn-outline-light w-full py-6 rounded-xl transition duration-300 hover:bg-white hover:text-gray-900 shadow-md">
+                <i class="bi bi-box-seam fs-2 mb-2"></i><br>View Inventory
+            </a>
+        </div>
+         <div class="col-md-3">
+            <a href="{{ url_for('sales_report') }}"
+                class="btn btn-lg btn-outline-light w-full py-6 rounded-xl transition duration-300 hover:bg-white hover:text-gray-900 shadow-md">
+                <i class="bi bi-newspaper fs-2 mb-2"></i><br>Sales Report
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const salesData = {{ sales_data | tojson | safe }};
+    const topSales = {{ top_products | tojson | safe }};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // ======= 📈 Line Chart (Daily Sales) =======
+        const ctx1 = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: salesData.labels,
+                datasets: [{
+                    label: 'Daily Sales ($)',
+                    data: salesData.values,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverRadius: 7,
+                    pointRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#fff', font: { size: 14 } }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#fff',
+                        bodyColor: '#fff'
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#ddd' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#ddd', callback: v => '$' + v },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    }
+                }
+            }
+        });
+
+        // ======= 🏆 Bar Chart (Top Selling Products) =======
+        const ctx2 = document.getElementById('topSelling').getContext('2d');
+
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: topSales.labels, // <-- use labels directly
+                datasets: [{
+                    label: 'Units Available',
+                    data: topSales.values, // <-- use values directly
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: '#ffffff',
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff'
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#ddd' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#ddd' },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}
