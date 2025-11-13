@@ -1,3 +1,4 @@
 /invenv/
 /__pycache__/
 /instance/
+.DS_Store
