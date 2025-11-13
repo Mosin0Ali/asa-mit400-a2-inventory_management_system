@@ -163,6 +163,7 @@ def edit_product(id):
 def delete_product(id):
     conn = get_connection()
     with conn.cursor() as cur:
+        cur.execute("DELETE FROM sale_items WHERE product_id=%s", (id,))
         cur.execute("DELETE FROM products WHERE product_id=%s", (id,))
     conn.commit()
     conn.close()
