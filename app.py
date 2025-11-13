@@ -12,7 +12,7 @@ def get_connection():
     return pymysql.connect(
         host='localhost',
         user='root',
-        password='worxpro@1234',  # your password
+        password='bYvgtiyzKbfaFAqcpJzeFwCWXqaPxrJv',  # your password
         database='inventory_db',
         cursorclass=pymysql.cursors.DictCursor
     )
