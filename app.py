@@ -10,10 +10,11 @@ app.secret_key = 'supersecretkey'
 # -------------------------------
 def get_connection():
     return pymysql.connect(
-        host='mysql-asa-mit-400-db.alwaysdata.net',
-        user='440528',
-        password='yXvZpMk@wFjKp7Y',  # your password
-        database='asa-mit-400-db_asa_inventory',
+        host='mysql.railway.internal',
+        user='root',
+        port='3306',
+        password='oqMALBkyoWPOVwrNrvrHlLmkRZjaZcXP',  # your password
+        database='railway',
         cursorclass=pymysql.cursors.DictCursor
     )
 
